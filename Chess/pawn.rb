@@ -1,6 +1,6 @@
 class Pawn < Piece
-  attr_reader :color, :board
-  attr_accessor :pos
+  # attr_reader :color, :board
+  # attr_accessor :pos
   
   SIDE_MOVE_DIFFS = [
       [1,1],
