@@ -1,12 +1,40 @@
-class KnightKing < Piece
+require_relative "piece"
+#to_s. How do we implement? What is its purpose
 
-  attr_reader :title
+module Stepable
+  def moves
+    valid_moves = []
+    cur_x, cur_y = self.pos
+    move_diffs.each do |(dx, dy)|
+      new_pos = [cur_x + dx, cur_y + dy]
+      if new_pos.all? { |coord| coord.between?(0, 7) }
+        valid_moves << new_pos
+      end
+    end
 
-  def initialize(title)
-    @title = title
+    valid_moves
   end
 
-  KNIGHT_MOVES = [
+  private
+  def move_diffs
+  end
+end
+
+class Knight < Piece
+  include Stepable
+  attr_reader :color, :board
+  attr_accessor :pos
+
+  def initialize(color, board, pos)
+    super(color, board, pos)
+  end
+
+  def symbol
+    :K
+  end
+
+  def move_diffs
+    [
     [-2, -1],
     [-2,  1],
     [-1, -2],
@@ -15,9 +43,25 @@ class KnightKing < Piece
     [ 1,  2],
     [ 2, -1],
     [ 2,  1]
-  ]
+    ]
+  end
+end
 
-  KING_MOVES = [
+class King < Piece
+  include Stepable
+  attr_reader :color, :board
+  attr_accessor :pos
+
+  def initialize(color, board, pos)
+    super(color, board, pos)
+  end
+
+  def symbol
+    :C
+  end
+
+  def move_diffs
+    [
     [0,1],
     [0,-1],
     [1,0],
@@ -26,26 +70,9 @@ class KnightKing < Piece
     [1,-1],
     [-1,-1],
     [-1,1]
-  ]
-
-  def moves(start_pos)
-    valid_moves = []
-    cur_x, cur_y = start_pos
-    if @title == "knight"
-      KNIGHT_MOVES.each do |(dx, dy)|
-        new_pos = [cur_x + dx, cur_y + dy]
-        if new_pos.all? { |coord| coord.between?(0, 7) }
-          valid_moves << new_pos
-        end
-      end
-    else
-      KING_MOVES.each do |(dx, dy)|
-        new_pos = [cur_x + dx, cur_y + dy]
-        if new_pos.all? { |coord| coord.between?(0, 7) }
-          valid_moves << new_pos
-        end
-      end
-    end
-    valid_moves
+    ]
   end
 end
+
+# p k = Knight.new(:W, b, [0,0], :K)
+# p k.moves

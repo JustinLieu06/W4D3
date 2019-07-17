@@ -1,6 +1,4 @@
 class Piece
-  attr_reader :value
-
   def initialize(color, board, pos)
     @color = color
     @board = board
@@ -8,15 +6,11 @@ class Piece
   end
 
   def to_s
-  
+    "#{symbol}"
   end
 
   def empty?
     color == :N
-  end
-
-  def moves(start_pos)
-
   end
 
   def pos=(val)
@@ -24,10 +18,13 @@ class Piece
   end
 
   def symbol
-    
+  end
+
+  def moves
   end
 
   private
   def move_into_check?(end_pos)
   end
 end
+

@@ -1,4 +1,7 @@
 require_relative "piece"
+require_relative "knight_king"
+require_relative "null_piece"
+require_relative "pawn"
 
 class NoPieceException < StandardError
   def message
@@ -25,12 +28,18 @@ class Board
   def default_board
     (0...@board.length).each do |i|
       (0...@board.length).each do |j|
-        if i == 0 || i == 1
-          @board[i][j] = Piece.new
-        elsif i == 6 || i == 7
-          @board[i][j] = Piece.new
+        if i == 1
+          @board[i][j] = Pawn.new(:B, board, [i, j])
+        elsif i == 6
+          @board[i][j] = Pawn.new(:W, board, [i, j])
+        elsif i == 0
+          @board[i][j] = Knight.new(:B, board, [i,j])
+        elsif i == 7
+          @board[i][j] = King.new(:W, board, [i,j])
         else
-          @board[i][j] = "-"
+          @board[i][j] = NullPiece.instance
+          #@board[i][j] = Pawn.new(:B, board, [i, j])
+
         end
       end
     end
@@ -46,30 +55,39 @@ class Board
     @board[x][y] = val
   end
   
-  def move_piece(start_pos, end_pos)
-    p self[start_pos].class
-    if self[start_pos].class != Piece
-      raise NoPieceException
-    end
+  def move_piece(color, start_pos, end_pos)
+    #p self[start_pos].class
+    # if self[start_pos].class != NulllPiece
+    #   raise NoPieceException
+    # end
 
-    if end_pos.any? { |coord| !coord.between?(0, 7) } #|| blocked by your own piece || #cannot move in that way || # put yourself in check
+    if end_pos.any? { |coord| !coord.between?(0, 7) } #|| blocked by your own piece # put yourself in check ||piece.moves
       raise CannotMoveException
     end
-
-    self[end_pos] = self[start_pos]
-    self[start_pos] = "-"
+    if self[start_pos].moves.include?(end_pos)
+      self[end_pos] = self[start_pos]
+      self[start_pos] = NullPiece.instance
+      self[end_pos].pos = end_pos
+    end
   end
 
   def render
-    # @board.each do |row|
-    #   puts row.join(' ')
-    # end
-    puts @board.map {|spot| spot.join('*')}
+    system "clear"
+    @board.each do |row|
+      row.each do |spot|
+        print spot
+        print " "
+      end
+      puts "\n"
+    end
+    #puts @board.map {|row| row.join('*')}
   end
 end
 
-b = Board.new()
+#b = Board.new
+# p k = Knight.new(:W, b, [0,0])
+# p k.moves
 # p b.[]([0,1])
 #p b[0,1]
-b.move_piece([0,1],[1,7])
-b.render
+#b.move_piece([0,0],[1,7])
+# b.render
